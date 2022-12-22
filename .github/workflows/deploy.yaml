@@ -22,21 +22,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-links:
+  build:
     runs-on: ${{ fromJSON('["ubuntu-latest", "self-hosted"]')[github.repository == 'github/docs-internal'] }}
     defaults:
        run:
-         working-directory: ./rest   
+         working-directory: ./rest
+    strategy: 
+      matrix:
+        node-version: [14.x] 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup node
+      - name: Setup node.js [${{ matrix.node-version }}]
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: ${{ matrix.node-version }}
           cache: npm
-          cache-dependency-path: ${working-directory}/package-lock.json
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install
         run: npm ci        
+        working-directory: ${{ working-directory }}
