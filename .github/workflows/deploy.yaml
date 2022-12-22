@@ -1,4 +1,4 @@
-name: 'Link Checker: All English'
+name: 'RESTAPI: DynamoDB/Lambda/API Gateway'
 
 # **What it does**: Renders the content of every page and check all internal links.
 # **Why we have it**: To make sure all links connect correctly.
@@ -31,7 +31,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 14
           cache: npm
 
       - name: Install
