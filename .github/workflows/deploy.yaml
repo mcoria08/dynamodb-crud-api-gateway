@@ -2,7 +2,7 @@ name: 'RESTAPI: DynamoDB/Lambda/API Gateway'
 
 # **What it does**: Renders the content of every page and check all internal links.
 # **Why we have it**: To make sure all links connect correctly.
-# **Who does it impact**: Docs content.
+# **Who does it impact**: Docs content. 
 
 on:
   workflow_dispatch:
@@ -42,14 +42,11 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Install
-        working-directory: ./rest
         run: npm ci        
         
       - name: Build
-        working-directory: ./rest
         run: npm build --if-present
 
       - name: Test
-        working-directory: ./rest
         run: npm test        
         
