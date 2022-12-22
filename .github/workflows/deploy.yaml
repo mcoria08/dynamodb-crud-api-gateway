@@ -37,4 +37,5 @@ jobs:
 
       - name: Install
         run: npm ci
-        cache-dependency-path: rest/package-lock.json
+        with:
+          cache-dependency-path: rest/package-lock.json
