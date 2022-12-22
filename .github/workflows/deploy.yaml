@@ -1,33 +1,55 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+name: 'RESTAPI: DynamoDB/Lambda/API Gateway'
 
-name: Node.js CI
+# **What it does**: Renders the content of every page and check all internal links.
+# **Why we have it**: To make sure all links connect correctly.
+# **Who does it impact**: Docs content.
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+      
+permissions:
+  contents: read
+  # Needed for the 'trilom/file-changes-action' action
+  pull-requests: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON('["ubuntu-latest", "self-hosted"]')[github.repository == 'github/docs-internal'] }}
     defaults:
        run:
          working-directory: ./rest
-    strategy:
+    strategy: 
       matrix:
-        node-version: [14.x]
-
+        node-version: [14.x] 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: npm
-        cache-dependency-path: '**/package-lock.json'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm run test:staging
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node.js [${{ matrix.node-version }}]
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install
+        working-directory: ./rest
+        run: npm ci        
+        
+      - name: Build
+        working-directory: ./rest
+        run: npm build --if-present
+
+      - name: Test
+        working-directory: ./rest
+        run: npm test        
+        
