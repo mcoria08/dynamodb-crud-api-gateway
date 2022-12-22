@@ -33,6 +33,7 @@ jobs:
         with:
           node-version: 14
           cache: npm
+          cache-dependency-path: rest/package-lock.json
 
       - name: Install
         run: npm ci
